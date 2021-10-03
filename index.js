@@ -1,5 +1,6 @@
 const codeRegex = /CSCTFFLAG\[([0-9a-f]{8})\]/g;
 const VALID_SERIAL = 1552976231;
+
 function verifyCode(flag) {
   const match = codeRegex.exec(flag);
   if (!match) return false;
@@ -15,3 +16,39 @@ function verifyCode(flag) {
   output ^= 32188132
   return output === VALID_SERIAL;
 }
+
+const convert = (from, to) => str => Buffer.from(str, from).toString(to)
+const utf8ToHex = convert('utf8', 'hex')
+const hexToUtf8 = convert('hex', 'utf8')
+
+function reverseCode(serial) {
+  let input = 32188132;
+
+  input ^= serial;
+  input = ~input;
+
+  let a = new Number(input & 0xffff).toString(16);
+  let b = new Number((input >> 16 ) & 0xffff).toString(16);
+
+  console.log(b + a);
+}
+
+function test (ina)
+{
+  const hex = ina.toString();
+  let output = 0;
+
+  for (let i = 0; i < hex.length; i++) {
+    const char = hex[i];
+    let value = parseInt(char, 16);
+    output <<= 4;
+    output |= value;
+  }
+
+  console.log(output)
+}
+
+//test(1552976231)
+
+//reverseCode(VALID_SERIAL);
+console.log(verifyCode("CSCTFFLAG[a284507c]"));
